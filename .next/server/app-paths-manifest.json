@@ -1,9 +1,9 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/gamification/page": "app/gamification/page.js",
   "/environmental/page": "app/environmental/page.js",
   "/governance/page": "app/governance/page.js",
   "/page": "app/page.js",
+  "/gamification/page": "app/gamification/page.js",
   "/reports/page": "app/reports/page.js",
   "/settings/page": "app/settings/page.js",
   "/social/page": "app/social/page.js"
