@@ -1,75 +1,45 @@
 {
   "pages": {
-    "/_not-found/page": [
-      "static/chunks/webpack-e08da262b32814b6.js",
-      "static/chunks/fd9d1056-a47fc9fd85a9bc9b.js",
-      "static/chunks/117-275374b534a15abb.js",
-      "static/chunks/main-app-4d61af896b152f4d.js",
-      "static/chunks/app/_not-found/page-d59d0d448e7e8962.js"
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
     ],
     "/layout": [
-      "static/chunks/webpack-e08da262b32814b6.js",
-      "static/chunks/fd9d1056-a47fc9fd85a9bc9b.js",
-      "static/chunks/117-275374b534a15abb.js",
-      "static/chunks/main-app-4d61af896b152f4d.js",
-      "static/css/655389af7b04e87b.css",
-      "static/chunks/841-d4f086ef6a153eb6.js",
-      "static/chunks/app/layout-cd9ac234cd824d94.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
     ],
     "/environmental/page": [
-      "static/chunks/webpack-e08da262b32814b6.js",
-      "static/chunks/fd9d1056-a47fc9fd85a9bc9b.js",
-      "static/chunks/117-275374b534a15abb.js",
-      "static/chunks/main-app-4d61af896b152f4d.js",
-      "static/chunks/app/environmental/page-f309bbb677623e68.js"
-    ],
-    "/gamification/page": [
-      "static/chunks/webpack-e08da262b32814b6.js",
-      "static/chunks/fd9d1056-a47fc9fd85a9bc9b.js",
-      "static/chunks/117-275374b534a15abb.js",
-      "static/chunks/main-app-4d61af896b152f4d.js",
-      "static/chunks/app/gamification/page-6d16a60fa5f71674.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/environmental/page.js"
     ],
     "/governance/page": [
-      "static/chunks/webpack-e08da262b32814b6.js",
-      "static/chunks/fd9d1056-a47fc9fd85a9bc9b.js",
-      "static/chunks/117-275374b534a15abb.js",
-      "static/chunks/main-app-4d61af896b152f4d.js",
-      "static/chunks/959-7c7836a1a624a033.js",
-      "static/chunks/48-cc2f010a2079cd7c.js",
-      "static/chunks/app/governance/page-b6b981509690f38a.js"
-    ],
-    "/page": [
-      "static/chunks/webpack-e08da262b32814b6.js",
-      "static/chunks/fd9d1056-a47fc9fd85a9bc9b.js",
-      "static/chunks/117-275374b534a15abb.js",
-      "static/chunks/main-app-4d61af896b152f4d.js",
-      "static/chunks/959-7c7836a1a624a033.js",
-      "static/chunks/514-9315c62972000568.js",
-      "static/chunks/app/page-60fd384d78ce0120.js"
-    ],
-    "/reports/page": [
-      "static/chunks/webpack-e08da262b32814b6.js",
-      "static/chunks/fd9d1056-a47fc9fd85a9bc9b.js",
-      "static/chunks/117-275374b534a15abb.js",
-      "static/chunks/main-app-4d61af896b152f4d.js",
-      "static/chunks/app/reports/page-4eade3acb6992e2c.js"
-    ],
-    "/settings/page": [
-      "static/chunks/webpack-e08da262b32814b6.js",
-      "static/chunks/fd9d1056-a47fc9fd85a9bc9b.js",
-      "static/chunks/117-275374b534a15abb.js",
-      "static/chunks/main-app-4d61af896b152f4d.js",
-      "static/chunks/959-7c7836a1a624a033.js",
-      "static/chunks/48-cc2f010a2079cd7c.js",
-      "static/chunks/app/settings/page-49fd456a4d38fe32.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/governance/page.js"
     ],
     "/social/page": [
-      "static/chunks/webpack-e08da262b32814b6.js",
-      "static/chunks/fd9d1056-a47fc9fd85a9bc9b.js",
-      "static/chunks/117-275374b534a15abb.js",
-      "static/chunks/main-app-4d61af896b152f4d.js",
-      "static/chunks/app/social/page-2bd62dd64b796546.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/social/page.js"
+    ],
+    "/gamification/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/gamification/page.js"
+    ],
+    "/reports/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/reports/page.js"
+    ],
+    "/settings/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/settings/page.js"
     ]
   }
 }
