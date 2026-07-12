@@ -184,7 +184,7 @@ export default function Gamification() {
       });
     }, 300);
     return () => clearTimeout(timer);
-  }, []);
+  }, [challenges]);
 
   const animateValue = (id: string, start: number, end: number, duration: number) => {
     let startTimestamp: number | null = null;
@@ -459,7 +459,9 @@ export default function Gamification() {
                       </div>
                       <div className="relative h-2.5 bg-gray-800 rounded-full overflow-hidden">
                         <div
-                          ref={el => progressBarRefs.current[challenge.id] = el}
+                          ref={(el) => {
+                            progressBarRefs.current[challenge.id] = el;
+                          }}
                           className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
                           style={{ 
                             width: `${progress}%`,

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { apiService } from '@/lib/api';
 
 interface ActivityCard {
   id: string;
@@ -15,39 +16,48 @@ interface EmployeeParticipation {
   activity: string;
   proof: string;
   points: number;
-  approval: 'Pending' | 'Approved';
+  approval: 'Pending' | 'Approved' | 'Rejected';
 }
-
-const mockActivityCards: ActivityCard[] = [
-  { id: '1', icon: '🌱', title: 'Tree Plantation', joined: 45 },
-  { id: '2', icon: '♻️', title: 'Recycling Drive', joined: 38 },
-  { id: '3', icon: '🏥', title: 'Health Camp', joined: 62 },
-  { id: '4', icon: '📚', title: 'Education Outreach', joined: 29 },
-];
-
-const mockParticipations: EmployeeParticipation[] = [
-  {
-    id: '1',
-    employee: 'Sarah Johnson',
-    activity: 'Tree Plantation',
-    proof: 'photo_001.jpg',
-    points: 50,
-    approval: 'Approved',
-  },
-  {
-    id: '2',
-    employee: 'Michael Chen',
-    activity: 'Recycling Drive',
-    proof: 'video_002.mp4',
-    points: 40,
-    approval: 'Pending',
-  },
-];
 
 export default function Social() {
   const [activeTab, setActiveTab] = useState('activities');
-  const [activityCards] = useState<ActivityCard[]>(mockActivityCards);
-  const [participations] = useState<EmployeeParticipation[]>(mockParticipations);
+  const [activityCards, setActivityCards] = useState<ActivityCard[]>([]);
+  const [participations, setParticipations] = useState<EmployeeParticipation[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const [activitiesRes, participationsRes] = await Promise.all([
+        apiService.getCSRActivities(),
+        apiService.getActivityParticipations(),
+      ]);
+
+      if (activitiesRes.success && activitiesRes.data) {
+        setActivityCards(
+          activitiesRes.data.map((activity) => ({
+            id: activity.id,
+            icon: '🌱',
+            title: activity.title,
+            joined: activity.participantCount,
+          }))
+        );
+      }
+
+      if (participationsRes.success && participationsRes.data) {
+        setParticipations(
+          participationsRes.data.map((participation) => ({
+            id: participation.id,
+            employee: participation.employeeName,
+            activity: participation.activityTitle,
+            proof: participation.proof || 'No proof attached',
+            points: participation.points,
+            approval: participation.status,
+          }))
+        );
+      }
+    };
+
+    loadData();
+  }, []);
 
   const getApprovalBadgeColor = (approval: string) => {
     switch (approval) {

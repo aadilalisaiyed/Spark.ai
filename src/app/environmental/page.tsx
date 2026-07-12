@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { 
   Search, 
   Plus, 
@@ -16,6 +16,7 @@ import {
   Clock,
   ArrowUpRight
 } from 'lucide-react';
+import { apiService } from '@/lib/api';
 import { Card } from '@/components/ui/Card';
 
 interface EnvironmentalGoal {
@@ -30,69 +31,6 @@ interface EnvironmentalGoal {
   owner: string;
   lastUpdated: string;
 }
-
-const mockGoals: EnvironmentalGoal[] = [
-  {
-    id: '1',
-    name: 'Reduce Manufacturing Emissions',
-    department: 'Operations',
-    targetCO2: 500,
-    currentCO2: 350,
-    progress: 70,
-    deadline: '2025-12-31',
-    status: 'On_Track',
-    owner: 'Sarah Chen',
-    lastUpdated: '2024-12-15',
-  },
-  {
-    id: '2',
-    name: 'Transition to Renewable Energy',
-    department: 'Facilities',
-    targetCO2: 200,
-    currentCO2: 50,
-    progress: 75,
-    deadline: '2025-06-30',
-    status: 'On_Track',
-    owner: 'Mike Rodriguez',
-    lastUpdated: '2024-12-18',
-  },
-  {
-    id: '3',
-    name: 'Waste Reduction Program',
-    department: 'Supply Chain',
-    targetCO2: 100,
-    currentCO2: 100,
-    progress: 100,
-    deadline: '2025-03-31',
-    status: 'Completed',
-    owner: 'Emily Watson',
-    lastUpdated: '2025-01-05',
-  },
-  {
-    id: '4',
-    name: 'Fleet Electrification Initiative',
-    department: 'Logistics',
-    targetCO2: 800,
-    currentCO2: 180,
-    progress: 22,
-    deadline: '2025-09-30',
-    status: 'At_Risk',
-    owner: 'David Park',
-    lastUpdated: '2024-12-22',
-  },
-  {
-    id: '5',
-    name: 'Supplier Carbon Offsetting',
-    department: 'Procurement',
-    targetCO2: 300,
-    currentCO2: 45,
-    progress: 15,
-    deadline: '2025-11-15',
-    status: 'Active',
-    owner: 'Lisa Thompson',
-    lastUpdated: '2025-01-02',
-  },
-];
 
 const statusConfig = {
   On_Track: { 
@@ -122,11 +60,35 @@ const statusConfig = {
 };
 
 export default function Environmental() {
-  const [goals] = useState<EnvironmentalGoal[]>(mockGoals);
+  const [goals, setGoals] = useState<EnvironmentalGoal[]>([]);
   const [activeTab, setActiveTab] = useState('goals');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [sortField, setSortField] = useState<string>('progress');
+
+  useEffect(() => {
+    const loadGoals = async () => {
+      const response = await apiService.getEmissionGoals();
+      if (response.success && response.data) {
+        setGoals(
+          response.data.map((goal) => ({
+            id: goal.id,
+            name: goal.name,
+            department: goal.department,
+            targetCO2: goal.targetCO2,
+            currentCO2: goal.currentCO2,
+            progress: goal.progress,
+            deadline: goal.deadline,
+            status: goal.status === 'Completed' ? 'Completed' : goal.status === 'Paused' ? 'At_Risk' : 'On_Track',
+            owner: goal.department,
+            lastUpdated: goal.createdAt,
+          }))
+        );
+      }
+    };
+
+    loadGoals();
+  }, []);
 
   const filteredGoals = useMemo(() => {
     return goals.filter(goal => 
