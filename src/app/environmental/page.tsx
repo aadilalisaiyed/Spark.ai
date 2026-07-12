@@ -10,7 +10,7 @@ interface EnvironmentalGoal {
   currentCO2: number;
   progress: number;
   deadline: string;
-  status: 'Active' | 'On Track' | 'Completed';
+  status: 'Active' | 'On_Track' | 'Completed' | 'At_Risk';
 }
 
 const mockGoals: EnvironmentalGoal[] = [
@@ -22,7 +22,7 @@ const mockGoals: EnvironmentalGoal[] = [
     currentCO2: 350,
     progress: 70,
     deadline: '2025-12-31',
-    status: 'On Track',
+    status: 'On_Track',
   },
   {
     id: '2',
@@ -32,7 +32,7 @@ const mockGoals: EnvironmentalGoal[] = [
     currentCO2: 50,
     progress: 75,
     deadline: '2025-06-30',
-    status: 'On Track',
+    status: 'On_Track',
   },
   {
     id: '3',
@@ -53,14 +53,15 @@ export default function Environmental() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Active':
-        return 'border-blue-500 text-blue-400';
-      case 'On Track':
-        return 'border-green-500 text-green-400';
+      case 'On_Track':
       case 'Completed':
-        return 'border-purple-500 text-purple-400';
+        return 'border-green-500 text-green-400 bg-green-900/20';
+      case 'At_Risk':
+        return 'border-yellow-500 text-yellow-400 bg-yellow-900/20';
+      case 'Active':
+        return 'border-emerald-500 text-emerald-400 bg-emerald-900/20';
       default:
-        return 'border-gray-500 text-gray-400';
+        return 'border-gray-500 text-gray-400 bg-gray-700/20';
     }
   };
 
@@ -186,7 +187,7 @@ export default function Environmental() {
                         goal.status
                       )}`}
                     >
-                      {goal.status}
+                      {goal.status.replace('_', ' ')}
                     </span>
                   </td>
                 </tr>
