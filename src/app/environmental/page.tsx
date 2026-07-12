@@ -1,106 +1,212 @@
 'use client';
 
 import React, { useState } from 'react';
-import { TopBar } from '@/components/layout/TopBar';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Tabs } from '@/components/ui/ProgressBar';
-import { SearchBox, Badge } from '@/components/ui/Badge';
-import { Table } from '@/components/ui/Modal';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { mockEmissionGoals } from '@/lib/api';
-import { EmissionData } from '@/types';
+
+interface EnvironmentalGoal {
+  id: string;
+  name: string;
+  department: string;
+  targetCO2: number;
+  currentCO2: number;
+  progress: number;
+  deadline: string;
+  status: 'Active' | 'On Track' | 'Completed';
+}
+
+const mockGoals: EnvironmentalGoal[] = [
+  {
+    id: '1',
+    name: 'Reduce Manufacturing Emissions',
+    department: 'Operations',
+    targetCO2: 500,
+    currentCO2: 350,
+    progress: 70,
+    deadline: '2025-12-31',
+    status: 'On Track',
+  },
+  {
+    id: '2',
+    name: 'Transition to Renewable Energy',
+    department: 'Facilities',
+    targetCO2: 200,
+    currentCO2: 50,
+    progress: 75,
+    deadline: '2025-06-30',
+    status: 'On Track',
+  },
+  {
+    id: '3',
+    name: 'Waste Reduction Program',
+    department: 'Supply Chain',
+    targetCO2: 100,
+    currentCO2: 100,
+    progress: 100,
+    deadline: '2025-03-31',
+    status: 'Completed',
+  },
+];
 
 export default function Environmental() {
+  const [goals] = useState<EnvironmentalGoal[]>(mockGoals);
   const [activeTab, setActiveTab] = useState('goals');
-  const [goals] = useState(mockEmissionGoals);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const tabs = [
-    { label: 'Emission Factors', value: 'factors', icon: '📈' },
-    { label: 'Product ESG', value: 'products', icon: '📦' },
-    { label: 'Carbon Transactions', value: 'transactions', icon: '💱' },
-    { label: 'Environmental Goals', value: 'goals', icon: '🎯' },
-  ];
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return 'border-blue-500 text-blue-400';
+      case 'On Track':
+        return 'border-green-500 text-green-400';
+      case 'Completed':
+        return 'border-purple-500 text-purple-400';
+      default:
+        return 'border-gray-500 text-gray-400';
+    }
+  };
 
   return (
-    <>
-      <TopBar title="Environmental" />
-      <div className="p-8 bg-dark-primary min-h-screen">
-        <div className="mb-6">
-          <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+    <div className="p-8 bg-gray-900 min-h-screen">
+      {/* Sub-Navigation Tabs */}
+      <div className="mb-8 flex flex-wrap gap-3">
+        {[
+          { id: 'factors', label: 'Emission Factors' },
+          { id: 'profiles', label: 'Product ESG Profiles' },
+          { id: 'transactions', label: 'Carbon Transactions' },
+          { id: 'goals', label: 'Environmental Goals' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-6 py-2 rounded-full font-medium transition-all ${
+              activeTab === tab.id
+                ? 'bg-green-600 text-white shadow-lg'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Action Bar */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+        {/* Left Actions */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors whitespace-nowrap">
+            + New Goal
+          </button>
+          <button className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-lg transition-colors whitespace-nowrap">
+            Edit
+          </button>
+          <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors whitespace-nowrap">
+            Delete
+          </button>
+          <div className="relative">
+            <button className="bg-gray-700 hover:bg-gray-600 text-gray-100 font-medium py-2 px-4 rounded-lg transition-colors whitespace-nowrap">
+              Export ▼
+            </button>
+          </div>
         </div>
 
-        {activeTab === 'goals' && (
-          <Card>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-slate-100">Environmental Goals</h2>
-              <div className="flex gap-2">
-                <Button variant="primary" size="sm">
-                  + New Goal
-                </Button>
-                <Button variant="secondary" size="sm">
-                  Edit
-                </Button>
-                <Button variant="danger" size="sm">
-                  Delete
-                </Button>
-                <Button variant="ghost" size="sm">
-                  Export
-                </Button>
-              </div>
-            </div>
+        {/* Right Search */}
+        <input
+          type="text"
+          placeholder="Search goals..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full sm:w-64 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
+        />
+      </div>
 
-            <div className="mb-4">
-              <SearchBox placeholder="Search goals..." />
-            </div>
+      {/* Data Table */}
+      <div className="bg-gray-800/80 border border-gray-700 rounded-lg overflow-hidden">
+        {/* Table Container */}
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            {/* Header */}
+            <thead>
+              <tr className="border-b border-gray-700 bg-gray-800">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Name</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Department</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Target CO₂</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Current CO₂</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Progress</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Deadline</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Status</th>
+              </tr>
+            </thead>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-dark-border bg-dark-surface">
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Name</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Department</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Target CO₂</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Current CO₂</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Progress</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Deadline</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {goals.map((goal) => (
-                    <tr
-                      key={goal.id}
-                      className="border-b border-dark-border hover:bg-dark-surface transition-colors"
+            {/* Body */}
+            <tbody>
+              {goals.map((goal, index) => (
+                <tr
+                  key={goal.id}
+                  className={`border-b border-gray-700 hover:bg-gray-700/30 transition-colors ${
+                    index === goals.length - 1 ? 'border-b-0' : ''
+                  }`}
+                >
+                  {/* Name */}
+                  <td className="px-6 py-4 text-sm text-gray-100 font-medium">{goal.name}</td>
+
+                  {/* Department */}
+                  <td className="px-6 py-4 text-sm text-gray-400">{goal.department}</td>
+
+                  {/* Target CO2 */}
+                  <td className="px-6 py-4 text-sm text-gray-400">{goal.targetCO2} t</td>
+
+                  {/* Current CO2 */}
+                  <td className="px-6 py-4 text-sm text-gray-400">{goal.currentCO2} t</td>
+
+                  {/* Progress Bar */}
+                  <td className="px-6 py-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-green-500 rounded-full transition-all duration-300"
+                          style={{ width: `${goal.progress}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-gray-300 text-xs font-medium w-10">{goal.progress}%</span>
+                    </div>
+                  </td>
+
+                  {/* Deadline */}
+                  <td className="px-6 py-4 text-sm text-gray-400">
+                    {new Date(goal.deadline).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </td>
+
+                  {/* Status Badge */}
+                  <td className="px-6 py-4 text-sm">
+                    <span
+                      className={`px-3 py-1 rounded-full border font-medium text-xs ${getStatusColor(
+                        goal.status
+                      )}`}
                     >
-                      <td className="px-4 py-3 text-slate-100">{goal.name}</td>
-                      <td className="px-4 py-3 text-slate-100">{goal.department}</td>
-                      <td className="px-4 py-3 text-slate-100">{goal.targetCO2} t</td>
-                      <td className="px-4 py-3 text-slate-100">{goal.currentCO2} t</td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <ProgressBar value={goal.progress} max={100} />
-                          <span className="text-sm text-slate-400">{goal.progress}%</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-slate-100">{goal.deadline}</td>
-                      <td className="px-4 py-3">
-                        <Badge variant="success">{goal.status}</Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        )}
+                      {goal.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-        {activeTab !== 'goals' && (
-          <Card>
-            <p className="text-slate-400">Content for {tabs.find(t => t.value === activeTab)?.label} coming soon...</p>
-          </Card>
+        {/* Empty State (if needed) */}
+        {goals.length === 0 && (
+          <div className="px-6 py-12 text-center">
+            <p className="text-gray-400">No environmental goals found.</p>
+          </div>
         )}
       </div>
-    </>
+
+      {/* Pagination Info */}
+      <div className="mt-4 text-sm text-gray-400 text-right">
+        Showing {goals.length} of {goals.length} goals
+      </div>
+    </div>
   );
 }
