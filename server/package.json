@@ -1,0 +1,27 @@
+{
+  "name": "spark-esg-server",
+  "version": "1.0.0",
+  "description": "Express + TypeScript backend for Spark.ai ESG Platform",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/pg": "^8.11.0",
+    "tsx": "^4.19.0"
+  }
+}
