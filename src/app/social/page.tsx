@@ -1,110 +1,211 @@
 'use client';
 
 import React, { useState } from 'react';
-import { TopBar } from '@/components/layout/TopBar';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Tabs } from '@/components/ui/ProgressBar';
-import { Badge } from '@/components/ui/Badge';
-import { mockCSRActivities, mockActivityParticipations } from '@/lib/api';
+
+interface ActivityCard {
+  id: string;
+  icon: string;
+  title: string;
+  joined: number;
+}
+
+interface EmployeeParticipation {
+  id: string;
+  employee: string;
+  activity: string;
+  proof: string;
+  points: number;
+  approval: 'Pending' | 'Approved';
+}
+
+const mockActivityCards: ActivityCard[] = [
+  { id: '1', icon: '🌱', title: 'Tree Plantation', joined: 45 },
+  { id: '2', icon: '♻️', title: 'Recycling Drive', joined: 38 },
+  { id: '3', icon: '🏥', title: 'Health Camp', joined: 62 },
+  { id: '4', icon: '📚', title: 'Education Outreach', joined: 29 },
+];
+
+const mockParticipations: EmployeeParticipation[] = [
+  {
+    id: '1',
+    employee: 'Sarah Johnson',
+    activity: 'Tree Plantation',
+    proof: 'photo_001.jpg',
+    points: 50,
+    approval: 'Approved',
+  },
+  {
+    id: '2',
+    employee: 'Michael Chen',
+    activity: 'Recycling Drive',
+    proof: 'video_002.mp4',
+    points: 40,
+    approval: 'Pending',
+  },
+];
 
 export default function Social() {
   const [activeTab, setActiveTab] = useState('activities');
-  const [activities] = useState(mockCSRActivities);
-  const [participations] = useState(mockActivityParticipations);
+  const [activityCards] = useState<ActivityCard[]>(mockActivityCards);
+  const [participations] = useState<EmployeeParticipation[]>(mockParticipations);
 
-  const tabs = [
-    { label: 'CSR Activities', value: 'activities', icon: '🌱' },
-    { label: 'Employee Participation', value: 'participation', icon: '👥' },
-    { label: 'Diversity Dashboard', value: 'diversity', icon: '🌍' },
-  ];
+  const getApprovalBadgeColor = (approval: string) => {
+    switch (approval) {
+      case 'Approved':
+        return 'border-green-500 text-green-400';
+      case 'Pending':
+        return 'border-yellow-500 text-yellow-400';
+      default:
+        return 'border-gray-500 text-gray-400';
+    }
+  };
 
   return (
-    <>
-      <TopBar title="Social" />
-      <div className="p-8 bg-dark-primary min-h-screen">
-        <div className="mb-6">
-          <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
-
-        {activeTab === 'activities' && (
-          <>
-            <div className="mb-6">
-              <Button variant="primary" size="md">
-                + New Activity
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activities.map((activity) => (
-                <Card key={activity.id} className="flex flex-col">
-                  <div className="text-4xl mb-3">{activity.icon}</div>
-                  <h3 className="text-lg font-bold text-slate-100 mb-2">{activity.title}</h3>
-                  <p className="text-slate-400 text-sm mb-3">{activity.participantCount} joined</p>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Badge variant="info">{activity.status}</Badge>
-                    <span className="text-sm text-eco-orange">{activity.points} pts</span>
-                  </div>
-                  <Button variant="primary" size="sm" className="mt-auto">
-                    Join Activity
-                  </Button>
-                </Card>
-              ))}
-            </div>
-          </>
-        )}
-
-        {activeTab === 'participation' && (
-          <Card>
-            <h2 className="text-xl font-bold text-slate-100 mb-6">Approval Queue</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-dark-border bg-dark-surface">
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Employee</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Activity</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Proof</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Points</th>
-                    <th className="px-4 py-3 text-left font-medium text-slate-300">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {participations.map((p) => (
-                    <tr key={p.id} className="border-b border-dark-border hover:bg-dark-surface">
-                      <td className="px-4 py-3 text-slate-100">{p.employeeName}</td>
-                      <td className="px-4 py-3 text-slate-100">{p.activityTitle}</td>
-                      <td className="px-4 py-3 text-slate-100">{p.proof}</td>
-                      <td className="px-4 py-3 text-slate-100">{p.points}</td>
-                      <td className="px-4 py-3">
-                        <Badge
-                          variant={
-                            p.status === 'Pending'
-                              ? 'warning'
-                              : p.status === 'Approved'
-                              ? 'success'
-                              : 'error'
-                          }
-                        >
-                          {p.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="mt-6 flex gap-2">
-              <Button variant="primary">Approve</Button>
-              <Button variant="danger">Reject</Button>
-            </div>
-          </Card>
-        )}
-
-        {activeTab === 'diversity' && (
-          <Card>
-            <p className="text-slate-400">Diversity Dashboard coming soon...</p>
-          </Card>
-        )}
+    <div className="p-8 bg-gray-900 min-h-screen">
+      {/* Sub-Navigation Tabs */}
+      <div className="mb-8 flex flex-wrap gap-3">
+        {[
+          { id: 'activities', label: 'CSR Activities' },
+          { id: 'participation', label: 'Employee Participation' },
+          { id: 'diversity', label: 'Diversity Dashboard' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-6 py-2 rounded-full font-medium transition-all ${
+              activeTab === tab.id
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
-    </>
+
+      {/* CSR Activities Section */}
+      {activeTab === 'activities' && (
+        <>
+          {/* New Activity Button */}
+          <div className="mb-8">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+              + New Activity
+            </button>
+          </div>
+
+          {/* Activity Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {activityCards.map((activity) => (
+              <div
+                key={activity.id}
+                className="bg-gray-800/80 border border-blue-500 rounded-lg p-6 flex flex-col"
+              >
+                {/* Icon */}
+                <div className="text-4xl mb-4">{activity.icon}</div>
+
+                {/* Title */}
+                <h3 className="text-lg font-bold text-gray-100 mb-4">{activity.title}</h3>
+
+                {/* Joined Count */}
+                <p className="text-sm text-gray-400 mb-2">{activity.joined} joined</p>
+
+                {/* Evidence Required */}
+                <p className="text-xs text-gray-500 mb-4">Evidence Required</p>
+
+                {/* Join Button */}
+                <button className="mt-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors w-full">
+                  Join
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Employee Participation Section */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-100 mb-6">Employee Participation: approval queue</h2>
+
+            {/* Table */}
+            <div className="bg-gray-800/80 border border-gray-700 rounded-lg overflow-hidden mb-6">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  {/* Header */}
+                  <thead>
+                    <tr className="border-b border-gray-700 bg-gray-800">
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Employee</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Activity/Challenge</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Proof</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Points</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Approval</th>
+                    </tr>
+                  </thead>
+
+                  {/* Body */}
+                  <tbody>
+                    {participations.map((participation, index) => (
+                      <tr
+                        key={participation.id}
+                        className={`border-b border-gray-700 hover:bg-gray-700/30 transition-colors ${
+                          index === participations.length - 1 ? 'border-b-0' : ''
+                        }`}
+                      >
+                        {/* Employee */}
+                        <td className="px-6 py-4 text-sm text-gray-100 font-medium">
+                          {participation.employee}
+                        </td>
+
+                        {/* Activity */}
+                        <td className="px-6 py-4 text-sm text-gray-400">{participation.activity}</td>
+
+                        {/* Proof */}
+                        <td className="px-6 py-4 text-sm text-gray-400">
+                          <a href="#" className="text-blue-400 hover:text-blue-300 underline">
+                            {participation.proof}
+                          </a>
+                        </td>
+
+                        {/* Points */}
+                        <td className="px-6 py-4 text-sm text-gray-100 font-medium">
+                          {participation.points}
+                        </td>
+
+                        {/* Approval Badge */}
+                        <td className="px-6 py-4 text-sm">
+                          <span
+                            className={`px-3 py-1 rounded-full border font-medium text-xs ${getApprovalBadgeColor(
+                              participation.approval
+                            )}`}
+                          >
+                            {participation.approval}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-end">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors order-2 sm:order-1">
+                Approve
+              </button>
+              <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-colors order-1 sm:order-2">
+                Reject
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Other Tabs Placeholder */}
+      {activeTab !== 'activities' && (
+        <div className="bg-gray-800/80 border border-gray-700 rounded-lg p-8 text-center">
+          <p className="text-gray-400 text-lg">
+            Content for Employee Participation and Diversity Dashboard coming soon...
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
